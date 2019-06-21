@@ -1,5 +1,5 @@
 // @flow
-import { of } from "rxjs";
+import { Observable, of } from "rxjs";
 import type { Command, Payload, Result } from "./index";
 import type { Context } from "../context";
 import fs from "fs";
@@ -7,7 +7,11 @@ import path from "path";
 
 
 const markdown = `
-# TIDE
+# TIDE (Name subject to change.)
+
+It's kinda like bash?
+
+I have no intentions to make this posix compatible.
 `
 
 

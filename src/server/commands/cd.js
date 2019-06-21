@@ -1,5 +1,5 @@
 // @flow
-import { of } from "rxjs";
+import { Observable, of } from "rxjs";
 import type { Command, Payload, Result } from "./index";
 import type { Context } from "../context";
 import fs from "fs";

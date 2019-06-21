@@ -14,13 +14,19 @@ import { Edit } from "./commands/edit";
 
 const state = {};
 
-function start({ atlas }) {
+
+type StartOptions = {
+  atlas: { dist: string, static: string };
+}
+
+
+function start({ atlas }: StartOptions) {
   log.debug("starting server");
   let registry = new Registry();
 
   [LS, CD, Read, Help, Edit].map(C => registry.register(new C()));
 
-  return new Promise((resolve, reject) => {
+  return new Promise<void>((resolve, reject) => {
     const app = express();
     const server = http.createServer(app);
     const io = SocketIO(server);
@@ -59,7 +65,7 @@ function start({ atlas }) {
       });
     });
 
-    server.listen(3000, error => {
+    server.listen(3434, error => {
       if (error) {
         return reject(error);
       }

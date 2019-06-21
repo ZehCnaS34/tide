@@ -1,5 +1,5 @@
 // @flow
-import { of } from "rxjs";
+import { of, Observable } from "rxjs";
 import type { Command, Payload, Result } from "./index";
 import type { Context } from "../context";
 import fs from "fs";
@@ -10,7 +10,7 @@ class Read {
     return "read";
   }
 
-  inferFileType(file) {
+  inferFileType(file: string) {
     let [name, ext] = file.split(".");
 
     if (/(txt)/.test(ext)) {
@@ -30,6 +30,9 @@ class Read {
 
   run(context: Context, payload: Payload): Observable<Result> {
     const [file = null] = payload.arguments; 
+    if (file === null) {
+      return of({ id: payload.id, data: "A file must be provided", type: "error" });
+    }
 
     const fileType = this.inferFileType(file);
 

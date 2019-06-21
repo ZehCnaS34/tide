@@ -1,5 +1,6 @@
-// @flow
+/* @flow */
 import type { Observable } from "rxjs";
+import { Context } from "../context";
 
 type Flags = { [id: string]: any };
 type Arguments = any[];
@@ -17,8 +18,9 @@ type Result = {
 };
 
 type Command = {
-  run: (ctx: Context, payload: Payload) => Observable<Result>,
-  name: string
+  run(ctx: Context, payload: Payload): Observable<Result>,
+  +pipe?: (ctx: Context, result: Result) => Observable<Result>,
+  +name: string
 };
 
 class Registry {
@@ -27,7 +29,7 @@ class Registry {
     this.commands = {};
   }
 
-  get(name) {
+  get(name: string) {
     if (!this.commands[name]) {
       throw new Error("No command");
     }
@@ -39,5 +41,5 @@ class Registry {
   }
 }
 
-export type { Command, Payload, Flags, Arguments };
+export type { Command, Payload, Flags, Arguments, Result };
 export { Registry };

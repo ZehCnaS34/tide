@@ -2,8 +2,10 @@
 import { Observable } from "rxjs";
 
 class Signal {
+  _queue: any[];
+  $stream: Observable<any>;
+
   constructor() {
-    const self = this;
     this._queue = [];
     this.$stream = new Observable((o) => {
       const handle = () => {
@@ -17,11 +19,11 @@ class Signal {
     }) 
   }
 
-  subscribe(fn) {
+  subscribe(fn: (any) => any) {
     return this.$stream.subscribe(fn);
   }
 
-  touch(value) {
+  touch(value: any) {
     this._queue.push(value);
   }
 }
