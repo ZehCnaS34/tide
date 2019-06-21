@@ -8,8 +8,7 @@ import { markdown } from "markdown";
 import moment from "moment";
 import Highlight from "react-highlight";
 import "../../common/github.css";
-import MonacoEditor from 'react-monaco-editor';
-
+import MonacoEditor from "react-monaco-editor";
 
 function Markdown({ data }) {
   return (
@@ -43,7 +42,7 @@ FileList.root = css`
   }
 `;
 
-function File({ data }) {
+function File({ data, editable }) {
   const root = useRef();
   const [width, setWidth] = useState(0);
 
@@ -52,20 +51,28 @@ function File({ data }) {
     setWidth(width);
   }, []);
 
+  const saveFile = (e) => {
+    if (e.key === 's' && e.ctrlKey) {
+      e.preventDefault();
+      alert("saving");
+    }
+  }
+
   if (/(text|txt)/.test(data.type)) {
     return <pre css={File.root}>{data.content}</pre>;
   } else {
     return (
-      <div css={File.root} ref={root}>
+      <div css={File.root} ref={root} onKeyDown={saveFile}>
         <MonacoEditor
           width={width}
           height="600"
           options={{
-            readOnly: true
+            readOnly: !editable
           }}
           language={data.type}
           theme="vs-dark"
-          value={data.content}/>
+          value={data.content}
+        />
       </div>
     );
   }
@@ -77,6 +84,36 @@ File.root = css`
   overflow-x: auto;
 `;
 
+function Flags({ flags }) {
+  let output = [];
+  for (const flag in flags) {
+    if (flag.length === 1) {
+      output.push(`-${flag} ${flags[flag]}`);
+    } else {
+      output.push(`--${flag}=${flags[flag]}`);
+    }
+  }
+
+  return output.join(" ");
+}
+
+function Payload({ payload }) {
+  const { command, flags, arguments: args } = payload;
+  return (
+    <span>
+      <span css={{ textDecoration: "underline", color: "yellow" }}>
+        {command}
+      </span>{" "}
+      <span css={{ color: "green" }}>{args}</span>
+      <Flags flags={flags} />
+    </span>
+  );
+}
+
+function Directory({ directory }) {
+  return <span css={{ color: "cyan" }}>{directory}</span>;
+}
+
 function Result({ result }) {
   const [hidden, setHidden] = useState(false);
   let node = null;
@@ -85,8 +122,9 @@ function Result({ result }) {
       node = <FileList data={result.data} />;
       break;
     case "file":
+    case "edit":
       // TODO: Figure out a better way
-      node = <File data={result.data} />;
+      node = <File data={result.data} editable={result.type == "edit"} />;
       break;
     case "markdown":
       node = <Markdown data={result.data} />;
@@ -96,11 +134,13 @@ function Result({ result }) {
   }
 
   return (
-    <div css={Result.root} onDoubleClick={() => setHidden(!hidden)}>
-      <div css={Result.header}>
-        <p>payload: {JSON.stringify(result.payload)}</p>
-        <p>Dir: {result.context.currentDirectory}</p>
-        <p>Time: {moment(result.time).format()}</p>
+    <div css={Result.root}>
+      <div css={Result.header} onDoubleClick={() => setHidden(!hidden)}>
+        <p>
+          <Directory directory={result.context.currentDirectory} />{" "}
+          <Payload payload={result.payload} />
+        </p>
+        <p css={{ textAlign: "right" }}>{moment(result.time).format()}</p>
       </div>
       <div css={Result.content}>{hidden || node}</div>
     </div>
@@ -108,11 +148,18 @@ function Result({ result }) {
 }
 
 Result.header = css`
+  display: flex;
+  flex-direction: row;
   background: #333f;
   color: white;
   padding: 1rem;
   & > p {
+    flex: 1;
     margin: 0;
+  }
+
+  & > p:last-child {
+    text-align: right;
   }
 `;
 

@@ -10,6 +10,7 @@ import { LS } from "./commands/ls";
 import { CD } from "./commands/cd";
 import { Read } from "./commands/read";
 import { Help } from "./commands/help";
+import { Edit } from "./commands/edit";
 
 const state = {};
 
@@ -17,7 +18,7 @@ function start({ atlas }) {
   log.debug("starting server");
   let registry = new Registry();
 
-  [LS, CD, Read, Help].map(C => registry.register(new C()));
+  [LS, CD, Read, Help, Edit].map(C => registry.register(new C()));
 
   return new Promise((resolve, reject) => {
     const app = express();
@@ -47,11 +48,11 @@ function start({ atlas }) {
             socket.emit("result", result);
           });
         } catch (e) {
-          result.context = context;
-          result.payload = payload;
           socket.emit("result", {
             id: payload.id,
             data: "Failed to run command",
+            context,
+            payload,
             type: "error"
           });
         }
