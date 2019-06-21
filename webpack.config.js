@@ -6,17 +6,6 @@ const MonacoWebpackPlugin = require("monaco-editor-webpack-plugin");
 const MONACO_DIR = path.resolve(__dirname, "./node_modules/monaco-editor");
 const APP_DIR = path.resolve(__dirname, "./src");
 
-const serverConfig = {
-  test: /.js$/,
-  exclude: /node_modules/,
-  use: {
-    loader: "babel-loader",
-    options: {
-      presets: ["@babel/preset-flow"]
-    }
-  }
-};
-
 const clientConfig = {
   test: /.js$/,
   exclude: /node_modules/,
@@ -33,7 +22,28 @@ const clientConfig = {
         "@babel/preset-react",
         "@babel/preset-flow"
       ],
-      plugins: ["@babel/plugin-transform-regenerator"]
+      plugins: [
+        "@babel/plugin-transform-regenerator",
+        "@babel/plugin-syntax-dynamic-import",
+        "@babel/plugin-proposal-class-properties",
+        // [
+        //   "@babel/plugin-proposal-decorators",
+        //   {
+        //     decoratorsBeforeExport: true
+        //   }
+        // ]
+      ]
+    }
+  }
+};
+
+const serverConfig = {
+  test: /.js$/,
+  exclude: /node_modules/,
+  use: {
+    loader: "babel-loader",
+    options: {
+      presets: ["@babel/preset-flow"]
     }
   }
 };
@@ -57,6 +67,7 @@ const output = [
     output: {
       filename: "bundle.js",
       publicPath: "/dist/",
+      chunkFilename: "[name].chunk.js",
       path: path.resolve(__dirname, "dist")
     },
     plugins: [
