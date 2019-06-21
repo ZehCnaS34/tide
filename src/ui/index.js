@@ -14,9 +14,9 @@ import minimist from "minimist";
 import { Provider, connect } from "react-redux";
 import { Signal } from "../common/signal";
 import { configureStore } from "./store";
-import { ResultsList, thunk } from "./results";
-const CommandBar = lazy(() => import("./command-bar"));
 
+const ResultsList = lazy(() => import("./results"));
+const CommandBar = lazy(() => import("./command-bar"));
 
 const store = configureStore();
 
@@ -81,11 +81,6 @@ function useInput(defaultValue = "") {
     $stream
   };
 }
-
-
-
-
-
 
 function Index() {
   return (

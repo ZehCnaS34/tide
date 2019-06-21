@@ -51,12 +51,18 @@ function File({ data, editable }) {
     setWidth(width);
   }, []);
 
-  const saveFile = (e) => {
-    if (e.key === 's' && e.ctrlKey) {
+  const saveFile = e => {
+    if (e.key === "s" && e.ctrlKey) {
       e.preventDefault();
       alert("saving");
+    } else if (e.key === "t" && e.ctrlKey) {
+      e.preventDefault();
+      alert("yeah.... sorry, no new tabs when you're focused on the editor");
+    } else if (e.key === "p" && e.ctrlKey) {
+      e.preventDefault();
+      alert("omg");
     }
-  }
+  };
 
   if (/(text|txt)/.test(data.type)) {
     return <pre css={File.root}>{data.content}</pre>;
@@ -191,6 +197,7 @@ ResultsList = connect(state => ({
   results: resultsList(state)
 }))(ResultsList);
 
+export default ResultsList;
 export { ResultsList };
 
 export { default as reducer } from "./reducer";

@@ -7,6 +7,7 @@ import { Registry } from "./commands";
 import { slog as log } from "../common/logger";
 
 import { LS } from "./commands/ls";
+import { Tree } from "./commands/tree";
 import { CD } from "./commands/cd";
 import { Read } from "./commands/read";
 import { Help } from "./commands/help";
@@ -14,17 +15,15 @@ import { Edit } from "./commands/edit";
 
 const state = {};
 
-
 type StartOptions = {
-  atlas: { dist: string, static: string };
-}
-
+  atlas: { dist: string, static: string }
+};
 
 function start({ atlas }: StartOptions) {
   log.debug("starting server");
   let registry = new Registry();
 
-  [LS, CD, Read, Help, Edit].map(C => registry.register(new C()));
+  [LS, CD, Read, Help, Edit, Tree].map(C => registry.register(new C()));
 
   return new Promise<void>((resolve, reject) => {
     const app = express();
