@@ -19,6 +19,15 @@ function parseCommand(input) {
   };
 }
 
+export const getMeta = (payload) => new Promise((resolve) => {
+  function handle(result) {
+    if (payload.id !== result.id) return;
+    resolve(result);
+    socket.off("meta-result", handle);
+  }
+  socket.on("meta-result", handle);
+  socket.emit("meta-get", payload);
+});
 
 export const rpc = (command) => new Promise((resolve) => {
   const payload = parseCommand(command);

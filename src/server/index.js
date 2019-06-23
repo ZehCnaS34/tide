@@ -12,6 +12,7 @@ import { CD } from "./commands/cd";
 import { Read } from "./commands/read";
 import { Help } from "./commands/help";
 import { Edit } from "./commands/edit";
+import { Man } from "./commands/man";
 
 const state = {};
 
@@ -23,7 +24,7 @@ function start({ atlas }: StartOptions) {
   log.debug("starting server");
   let registry = new Registry();
 
-  [LS, CD, Read, Help, Edit, Tree].map(C => registry.register(new C()));
+  [LS, CD, Read, Help, Edit, Tree, Man].map(C => registry.register(new C()));
 
   return new Promise<void>((resolve, reject) => {
     const app = express();
@@ -39,6 +40,7 @@ function start({ atlas }: StartOptions) {
 
     io.on("connection", socket => {
       const context = new Context();
+      context.registry = registry;
 
       socket.on("ready", () => {
         socket.emit("onContext", context);

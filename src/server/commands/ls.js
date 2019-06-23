@@ -10,6 +10,13 @@ class LS {
     return "ls";
   }
 
+  get man() {
+    return `# LS
+
+    LiSt the files/directories in the current directory or a given relative path.
+    `
+  }
+
   run(context: Context, payload: Payload): Observable<Result> {
     const [relativeDirectory = "."] = payload.arguments; 
     let fullPath = path.resolve(context.currentDirectory, relativeDirectory);
